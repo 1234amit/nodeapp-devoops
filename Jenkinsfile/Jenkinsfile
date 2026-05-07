@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "12amit1234/node-demo-app"
+        IMAGE_TAG = "1.0"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                '''
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push $IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Helm Deploy') {
+            steps {
+                sh '''
+                helm upgrade --install node-demo ./node-demo-chart \
+                --set image.repository=$IMAGE_NAME \
+                --set image.tag=$IMAGE_TAG
+                '''
+            }
+        }
+    }
+}

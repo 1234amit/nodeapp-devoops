@@ -1,0 +1,27 @@
+docker run: docker run -p 3000:3000 node-k8s-app
+
+
+amit@master1:~/Desktop/projects/node-k8s-devops-app$ 
+curl http://localhost:3000/
+Node Kubernetes Deployment Test
+amit@master1:~/Desktop/projects/node-k8s-devops-app$ 
+curl http://localhost:3000/health
+{"status":"OK"}amit@master1:~/Desktop/projects/node-k8s-devops-app$ 
+
+
+
+Kubernetes:
+
+amit@master1:~/Desktop/projects/node-k8s-devops-app$ 
+curl http://node.local:31158/
+Node Kubernetes Deployment Test
+
+amit@master1:~/Desktop/projects/node-k8s-devops-app$ 
+curl http://node.local:31158/health
+{"status":"OK"}amit@master1:~/Desktop/projects/node-k8s-devops-app$ 
+
+
+
+helm:
+
+helm create node-app-chart
